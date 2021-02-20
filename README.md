@@ -11,7 +11,10 @@ pip : pyqt5
 
 conda vtk=8.1
 
+#
+Running:
 
-running:
 Lidar & rotating platform
+
+Show in lidar.pdf
 
