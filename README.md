@@ -3,7 +3,8 @@ Visualization of point clouds from a rotating LMS511 Lidar
 激光雷达数据，读取与三维显示
 
 # Running:
-运行准备
+
+需要设备:LMS511， 转台（淘宝）
 
 设备如何摆放： lidar.pdf
 
@@ -23,5 +24,9 @@ pip : pyqt5
 
 conda vtk=8.1
 
+# Settings：
+选择1，2：
+1，设备IP地址修改为：169.254.104.114：2111，
 
+2，或者修改程序mysock.py里的ip和port
 
