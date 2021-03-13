@@ -25,7 +25,8 @@ pip : pyqt5
 conda vtk=8.1
 
 # Settings：
-选择1，2：
+选择1或2：
+
 1，设备IP地址修改为：169.254.104.114：2111，
 
 2，或者修改程序mysock.py里的ip和port
