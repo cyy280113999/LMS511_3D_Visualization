@@ -27,5 +27,7 @@ conda vtk=8.1
 
 2，或者修改程序mysock.py里的ip和port
 
+# 版权
 
+软著申请中
 
