@@ -3,6 +3,11 @@ Visualization of point clouds from a rotating LMS511 Lidar
 
 激光雷达数据读取与三维显示
 
+# 版权
+
+软著申请中, 暂时不提供代码
+
+
 # 快速使用：
 
 详细说明： 见项目手册，内容包含以下部分
@@ -27,7 +32,4 @@ conda vtk=8.1
 
 2，或者修改程序mysock.py里的ip和port
 
-# 版权
-
-软著申请中
 
