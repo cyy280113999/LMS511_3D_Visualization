@@ -9,8 +9,9 @@ Visualization of point clouds from a rotating LMS511 Lidar
 
 
 # 快速使用：
+使用说明：见使用说明
 
-详细说明： 见项目手册，内容包含以下部分
+开发说明： 见项目手册v1.2
 
 需要设备:LMS511， 转台（淘宝）
 
