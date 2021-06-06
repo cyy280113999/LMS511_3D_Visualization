@@ -2,6 +2,7 @@
 import sys
 from functools import partial
 # third pk
+import vtk
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QApplication
 
@@ -21,10 +22,10 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
 
 # user pk
-from VtkPointCloud import *
+from VtkPointCloud import VtkPointCloud
 from InformationWindow import InformationWindow
 from mySock import MySock
-from VtkWindow import *
+from VtkWindow import VtkWindow
 from TelegramProcess import *
 
 # Settings:
@@ -481,6 +482,7 @@ def main():
     app = QApplication(sys.argv)
     MainWindow()
     sys.exit(app.exec_())
+
 
 
 if __name__ == "__main__":

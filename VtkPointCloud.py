@@ -1,4 +1,5 @@
 import vtk
+import numpy as np
 
 
 class VtkPointCloud:
@@ -110,8 +111,12 @@ class VtkPointCloud:
         self.vtkDepth.Modified()
 
     def addPoints(self, points):
-        if not points:
-            return
+        if points is list:
+            if points.empty():
+                return
+        if type(points) is np.ndarray:
+            if not points.any():
+                return
         for point in points:
             self.addPoint(point)
 

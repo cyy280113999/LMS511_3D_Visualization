@@ -171,11 +171,10 @@ class MySock:
             self.master.add_information('sended:' + send_data.decode())
             recv_data = self.sock.recv(bufsiz)
             time2 = time.time()
-            data = recv_data.decode()
-            self.master.add_information('received:' + data)
+            self.master.add_information('received:' + recv_data.decode())
             self.master.add_information("communication time %f" % (time2 - time1))
             time3 = time.time()
-            self.master.process_once_data(data)
+            self.master.process_once_data(recv_data)
             time4 = time.time()
             self.master.add_information("processing time %f" % (time4 - time3))
             self.master.add_information("totally cost %f" % (time4 - time1))
@@ -426,12 +425,11 @@ def readalways_fun(mysock: MySock):
             mysock.sock.send(send_data)
             mysock.master.add_information('sended:' + send_data.decode())
             recv_data = mysock.sock.recv(bufsiz)
-            data = recv_data.decode()
-            mysock.master.add_information('received:' + data)
+            mysock.master.add_information('received:' + recv_data.decode())
             time2 = time.time()
             mysock.master.add_information("communication time %f" % (time2 - time1))
             time3 = time.time()
-            mysock.master.process_once_data(data)
+            mysock.master.process_once_data(recv_data)
             time4 = time.time()
             mysock.master.add_information("processing time %f" % (time4 - time3))
         except socket.error as e:
@@ -497,22 +495,19 @@ def round_read_fun(mysock: MySock, period, gap):
             try:
                 mysock.sock.send(send_data)
                 recv_data = mysock.sock.recv(bufsiz)
-                data = recv_data.decode()
-                mysock.master.process_round_data(data, now_start_time - total_start_time, period)
+                mysock.master.process_round_data(recv_data, now_start_time - total_start_time, period)
                 mysock.master.progressBar.setValue(round((now_start_time - total_start_time) * 100 / period))
             except socket.error as e:
                 print(e)
             time.sleep(gap)
     except Exception as e:
         print(e)
-    try:
-        mysock.master.RoundModeBtn.setText("Round Scan")
-        mysock.read_off_flag = False
-        # mysock.master.progressBar.setVisible(False)
-        mysock.state.toRunning()
-    except Exception as e:
-        print(e)
-    print("stop at:" + time.asctime()+'. s:', time.time())
+    mysock.master.progressBar.setValue(100)
+    mysock.master.RoundModeBtn.setText("Round Scan")
+    mysock.read_off_flag = False
+    # mysock.master.progressBar.setVisible(False)
+    mysock.state.toRunning()
+    print("stop at:", time.asctime(), '. s:', time.time())
 
 # no use
 def _reading_200_times_fun(_msock):
