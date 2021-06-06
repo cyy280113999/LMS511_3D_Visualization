@@ -7,11 +7,12 @@ class InformationWindow(QtWidgets.QWidget):
     isShow = False
     appendSignal = QtCore.pyqtSignal(str)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, master=None):
+        super().__init__(master)
         # 设置总体布局
         self.resize(600, 400)
         self.move(1000, 100)
+        self.setWindowTitle(self.headText)
         # 添加控件
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.buttonPanel = QtWidgets.QHBoxLayout(self)

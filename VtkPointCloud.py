@@ -1,92 +1,9 @@
-import math
 import vtk
-
-
-def data_process(data):
-    # data process
-    # raw_data = data
-    data = data.split(' ')
-    if not data[0] == "\x02sRA":
-        return []
-    if data[-1].endswith('\x03'):
-        data[-1] = data[-1][:-1]
-    # 回波系数，乘数
-
-    if data[21] == '40000000':
-        factors = 2
-    elif data[21] == '3F800000':
-        factors = 1
-    else:
-        return []
-    # 起始角度
-    startangle = int(data[23], 16) / 10000
-    # 角度分辨率
-    anglestep = int(data[24], 16) / 10000
-    # 测量得数据总量
-    datanum = int(data[25], 16)
-    if datanum == 0:
-        return
-    points = []
-    for i in range(datanum):
-        try:
-            point = []
-            #                 radius     ,      unit:mm , double or not         angle factor    ,          degree to arc
-            point.append(
-                int(data[26 + i], 16) / 1000 * factors * math.cos((startangle + i * anglestep) / 180 * math.pi))
-            point.append(
-                int(data[26 + i], 16) / 1000 * factors * math.sin((startangle + i * anglestep) / 180 * math.pi))
-            point.append(0)
-            points.append(point)
-        except Exception as e:
-            print("exception:", e)
-            print('i = %d ' % (i) + 'datanum: %d ' % (datanum))
-            # print('the raw data is : ' + raw_data)
-    return points
-
-
-def Debug_rounddata_process(data, now_in_period, period):
-    # left lay down
-
-    data = data.split(' ')
-    if not data[0] == "\x02sRA":
-        print('error data')
-        return []
-    if data[-1].endswith('\x03'):
-        data[-1] = data[-1][:-1]
-    if data[21] == '40000000':
-        factors = 2
-    elif data[21] == '3F800000':
-        factors = 1
-    else:
-        print('error data')
-        return []
-
-    startangle = int(data[23], 16) / 10000
-    anglestep = int(data[24], 16) / 10000
-    datanum = int(data[25], 16)
-    points = []
-
-    phi = now_in_period / period * 2 * math.pi
-    for i in range(datanum):
-        try:
-            point = []
-            radius = int(data[26 + i], 16) / 1000 * factors
-            theta = (startangle + i * anglestep) / 180 * math.pi
-            point.append(radius * math.sin(theta) * math.cos(phi))  # X
-            point.append(radius * math.sin(theta) * math.sin(phi))  # Y
-            point.append(radius * math.cos(theta))  # Z
-            points.append(point)
-        except Exception as e:
-            print("exception:", e)
-            print("at time:%d, data num: %d, in [%d]" % (now_in_period, datanum, i))
-            # print('the raw data is : ' + raw_data)
-            print('i = %d ' % (i) + 'datanum: %d ' % (datanum))
-    return points
 
 
 class VtkPointCloud:
     # 访问vtkActor获得数据
-    def __init__(self, zMin=-10.0, zMax=10.0, maxNumPoints=1e7):
+    def __init__(self, zMin=-10.0, zMax=10.0, maxNumPoints=1e8):
         self.maxNumPoints = maxNumPoints
         self.zMin = zMin
         self.zMax = zMax
@@ -115,7 +32,7 @@ class VtkPointCloud:
         return self.vtkActor
 
     # 用不同的 polydata 显示不同的数据
-    def setOutPoly(self, polydata: vtk.vtkPolyData):
+    def setOutPoly(self, polydata: vtk.vtkPolyData, *, colorOn=True):
         # # use addpoint, correctly
         # self.clearPoints()
         # points = polydata.GetPoints()
@@ -124,30 +41,31 @@ class VtkPointCloud:
         #     self.addPoint(point)
 
         # rebuild polydata, correctly
-        self.vtkPolyData = polydata
-        self.vtkPoints = self.vtkPolyData.GetPoints()
-        self.vtkCells = vtk.vtkCellArray()
-        self.vtkDepth = vtk.vtkDoubleArray()
-        self.vtkDepth.SetName('DepthArray')
-        for i in range(self.vtkPoints.GetNumberOfPoints()):
-            point = self.vtkPoints.GetPoint(i)
-            self.vtkDepth.InsertNextValue(point[2])
-            self.vtkCells.InsertNextCell(1)
-            self.vtkCells.InsertCellPoint(i)
-        self.vtkPoints.Modified()
-        self.vtkCells.Modified()
-        self.vtkDepth.Modified()
-        self.vtkPolyData.SetVerts(self.vtkCells)
-        self.vtkPolyData.GetPointData().SetScalars(self.vtkDepth)
-        self.vtkPolyData.GetPointData().SetActiveScalars('DepthArray')
-        self.mapper.SetInputData(self.vtkPolyData)
-        self.mapperColorSet()  # 不起作用
+        if colorOn == True:
+            self.vtkPolyData = polydata
+            self.vtkPoints = self.vtkPolyData.GetPoints()
+            self.vtkCells = vtk.vtkCellArray()
+            self.vtkDepth = vtk.vtkDoubleArray()
+            self.vtkDepth.SetName('DepthArray')
+            for i in range(self.vtkPoints.GetNumberOfPoints()):
+                point = self.vtkPoints.GetPoint(i)
+                self.vtkDepth.InsertNextValue(point[2])
+                self.vtkCells.InsertNextCell(1)
+                self.vtkCells.InsertCellPoint(i)
+            self.vtkPoints.Modified()
+            self.vtkCells.Modified()
+            self.vtkDepth.Modified()
+            self.vtkPolyData.SetVerts(self.vtkCells)
+            self.vtkPolyData.GetPointData().SetScalars(self.vtkDepth)
+            self.vtkPolyData.GetPointData().SetActiveScalars('DepthArray')
+            self.mapper.SetInputData(self.vtkPolyData)
+        else:
+            # remove color , white points
+            # this change place which the mapper point to
+            _filter = vtk.vtkVertexGlyphFilter()
+            _filter.AddInputData(polydata)
+            self.mapper.SetInputConnection(_filter.GetOutputPort())
 
-        # # remove color , white points
-        # # this change place which the mapper point to
-        # _filter = vtk.vtkVertexGlyphFilter()
-        # _filter.AddInputData(polydata)
-        # self.mapper.SetInputConnection(_filter.GetOutputPort())
     # import vtk
     # filename = 'teapot.ply'
     # reader = vtk.vtkPLYReader()
@@ -173,6 +91,8 @@ class VtkPointCloud:
         self.mapper.SetScalarVisibility(1)
 
     def setColorRange(self, zMin, zMax):
+        if zMin >= zMax:
+            return
         self.zMin = zMin
         self.zMax = zMax
         self.mapper.SetScalarRange(zMin, zMax)
@@ -247,16 +167,3 @@ def PointColor2():
     vlut.SetNumberOfTableValues(256)
     vlut.Build()
     return vlut
-
-
-def get_program_parameters(s):
-    import argparse
-    description = 'Generate image data, then write a .ply file.'
-    epilogue = '''
-   '''
-    parser = argparse.ArgumentParser(description=description, epilog=epilogue)
-    parser.add_argument('filename', help='A required ply filename.', nargs='?',
-                        const=s,
-                        type=str, default=s)
-    args = parser.parse_args()
-    return args.filename
