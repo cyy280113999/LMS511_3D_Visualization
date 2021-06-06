@@ -1,4 +1,4 @@
-# LMS511_3D_Visualization v1.2
+# LMS511_3D_Visualization v1.3
 Visualization of point clouds from a rotating LMS511 Lidar
 
 激光雷达数据读取与三维显示
@@ -7,10 +7,11 @@ Visualization of point clouds from a rotating LMS511 Lidar
 主程序
 窗口测试
 点云数据
+演示视频
 # 快速使用：
 使用说明：见使用说明
 
-开发说明： 见项目手册v1.2
+开发说明： 见项目手册
 
 需要设备:LMS511， 转台（淘宝）
 
