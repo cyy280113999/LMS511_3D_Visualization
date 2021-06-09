@@ -1,7 +1,7 @@
 # LMS511_3D_Visualization v1.3
 Visualization of point clouds from a rotating LMS511 Lidar
 
-激光雷达数据读取与三维显示
+激光雷达旋转扫描与三维显示
 
 内容包含：
 主程序
