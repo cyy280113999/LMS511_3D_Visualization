@@ -34,4 +34,8 @@ conda vtk=8.1
 2，或者修改程序mysock.py里的ip
 
 # 演示
-![https://github.com/cyy280113999/LMS511_3D_Visualization/blob/main/scan.gif]
+![](https://github.com/cyy280113999/LMS511_3D_Visualization/blob/main/window.png)
+
+![](https://github.com/cyy280113999/LMS511_3D_Visualization/blob/main/scan.gif)
+
+![](https://github.com/cyy280113999/LMS511_3D_Visualization/blob/main/pointcloud.png)
